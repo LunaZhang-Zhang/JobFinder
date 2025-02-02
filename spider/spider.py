@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding:utf-8 -*-
 # 库使用
 # selenium：用于模拟浏览器操作。
 # webdriver_manager：自动管理驱动程序。
@@ -21,7 +23,7 @@ from bs4 import BeautifulSoup
 # 岗位信息结构
 class JobInfo:
     name = ''          # 岗位名称
-    type = ''          # 岗位类别
+    job_type = ''          # 岗位类别
     location = []      # 工作地点
     company = ''       # 招聘公司
     salary = ''        # 薪资完整信息，我觉得方便用于展示，eg 18-20K*15薪
@@ -221,7 +223,7 @@ class Spider:
                 )
             job_info_list = self.__crawl_and_parse(base_url)
             for job_info in job_info_list:
-                job_info.type = job_query
+                job_info.job_type = job_query
             self.__write_to_database(job_info_list)
 
 # 主函数

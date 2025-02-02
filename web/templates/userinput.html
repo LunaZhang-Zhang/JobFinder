@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>岗位信息提交表单</title>
+    <style>
+        /* 全局样式设置 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* 表单容器样式 */
+        .form-container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        /* 表单标题样式 */
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        /* 表单标签样式 */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        /* 输入框和文本域样式 */
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        /* 提交按钮样式 */
+        button {
+            background-color: #007BFF;
+            color: white;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 提示消息样式 */
+        #message {
+            text-align: center;
+            margin-top: 20px;
+            color: #007BFF;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h2>提交期望岗位信息</h2>
+        <!-- 表单部分，这里的 action 需要替换为你实际的后台服务器地址 -->
+        <form id="jobForm">
+            <label for="jobCategory">岗位类别：</label>
+            <input type="text" id="jobCategory" name="jobCategory" placeholder="请输入岗位类别" required>
+
+            <label for="minSalary">最小薪资：</label>
+            <input type="number" id="minSalary" name="minSalary" placeholder="请输入最小薪资" min="0" required>
+
+            <label for="education">学历背景：</label>
+            <select id="education" name="education" required>
+                <option value="">请选择学历</option>
+                <option value="高中">高中</option>
+                <option value="大专">大专</option>
+                <option value="本科">本科</option>
+                <option value="硕士">硕士</option>
+                <option value="博士">博士</option>
+            </select>
+
+            <label for="skills">技能描述：</label>
+            <textarea id="skills" name="skills" rows="4" placeholder="请描述你的技能" required></textarea>
+
+            <button type="submit">提交信息</button>
+        </form>
+        <div id="message"></div>
+        <!-- 新增的按钮 -->
+        <button id="viewFavoriteJobs">浏览已收藏岗位信息</button>
+    </div>
+
+    <script>
+        const form = document.getElementById("jobForm");
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = '正在提交，请稍候...';
+            // 从浏览器存储内取出用户token
+            token = localStorage.getItem("token");
+            // 从浏览器存储内取出用户id
+            userid = localStorage.getItem("userid");
+            // 这里注释掉的代码是使用 fetch API 提交表单数据的示例，如果你想用 fetch 可以取消注释并调整代码
+            fetch('/matchedjob/list', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify(
+                    {
+                        "userid": userid,
+                        "jobCategory": document.getElementById("jobCategory"),
+                        "minSalary": document.getElementById("minSalary"),
+                        "education": document.getElementById("education"),
+                        "skills": document.getElementById("skills"),
+                    }
+                )
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('提交失败');
+                }
+            })
+            .then(data => {
+                localStorage.setItem("joblist", data)
+            })
+            .catch(error => {
+                messageDiv.textContent = error.message;
+            });
+        });
+
+        // 为新增按钮绑定点击事件
+        document.getElementById('viewFavoriteJobs').addEventListener('click', function () {
+            window.location.href = '/showFavoriteJobList.html';
+        });
+    </script>
+</body>
+
+</html>

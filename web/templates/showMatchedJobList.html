@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>岗位信息列表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .job-list {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 600px;
+        }
+
+        .job-item {
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .job-item:last-child {
+            border-bottom: none;
+        }
+
+        .job-item p {
+            margin: 5px 0;
+        }
+
+        .favorite-button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #e0e0e0;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .favorite-button.favorited {
+            background-color: #007BFF;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>岗位信息列表</h1>
+    <div class="job-list" id="jobList"></div>
+
+    <script>
+        // 从浏览器存储内取出用户匹配的job list
+        const matchedJobListData = JSON.parse(localStorage.getItem("joblist"));
+        const jobList = document.getElementById('jobList');
+
+        // 处理收藏按钮点击事件的函数
+        const handleFavoriteClick = (jobId, button, isFavorited) => {
+            const url = isFavorited ? '/favoritejob/delete' : '/favoritejob/add';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ jobId: jobId })
+            })
+              .then(response => response.json())
+              .then(data => {
+                    if (data.success) {
+                        button.classList.toggle('favorited');
+                        // 假设成功后更新 isFavorited 状态
+                        button.dataset.isFavorited =!isFavorited;
+                    } else {
+                        alert(isFavorited ? '取消收藏失败：' + data.message : '收藏失败：' + data.message);
+                    }
+                })
+              .catch(error => {
+                    console.error(isFavorited ? '取消收藏请求出错:' : '收藏请求出错:', error);
+                    alert(isFavorited ? '取消收藏请求出错，请稍后重试' : '收藏请求出错，请稍后重试');
+                });
+        };
+
+        if (matchedJobListData && matchedJobListData.result) {
+            matchedJobListData.result.forEach(job => {
+                const jobItem = document.createElement('div');
+                jobItem.classList.add('job-item');
+                jobItem.setAttribute('data-job-id', job.jobid);
+
+                const namePara = document.createElement('p');
+                namePara.textContent = `岗位名称: ${job.name}`;
+                jobItem.appendChild(namePara);
+
+                const jobTypePara = document.createElement('p');
+                jobTypePara.textContent = `岗位类别: ${job.job_type}`;
+                jobItem.appendChild(jobTypePara);
+
+                const locationPara = document.createElement('p');
+                locationPara.textContent = `工作地点: ${job.location}`;
+                jobItem.appendChild(locationPara);
+
+                const companyPara = document.createElement('p');
+                companyPara.textContent = `招聘公司: ${job.company}`;
+                jobItem.appendChild(companyPara);
+
+                const salaryPara = document.createElement('p');
+                salaryPara.textContent = `薪资信息: ${job.salary}`;
+                jobItem.appendChild(salaryPara);
+
+                if (typeof job.salary_month != 'undefined') {
+                    const salaryMonthPara = document.createElement('p');
+                    salaryMonthPara.textContent = `薪资月数: ${job.salary_month}`;
+                    jobItem.appendChild(salaryMonthPara);
+                }
+
+                const linkPara = document.createElement('p');
+                linkPara.innerHTML = `岗位链接: <a href="${job.link}" target="_blank">${job.link}</a>`;
+                jobItem.appendChild(linkPara);
+
+                const backgroundPara = document.createElement('p');
+                backgroundPara.textContent = `学历背景: ${job.background}`;
+                jobItem.appendChild(backgroundPara);
+
+                const requirementsPara = document.createElement('p');
+                requirementsPara.textContent = `岗位要求: ${job.requirements}`;
+                jobItem.appendChild(requirementsPara);
+
+                const favoriteButton = document.createElement('button');
+                favoriteButton.textContent = '收藏';
+                favoriteButton.classList.add('favorite-button');
+                favoriteButton.dataset.jobId = job.jobid;
+
+                if (job.is_favorited) {
+                    favoriteButton.classList.add('favorited');
+                    favoriteButton.dataset.isFavorited = 'true';
+                } else {
+                    favoriteButton.dataset.isFavorited = 'false';
+                }
+
+                favoriteButton.addEventListener('click', () => {
+                    const isFavorited = favoriteButton.dataset.isFavorited === 'true';
+                    handleFavoriteClick(job.jobid, favoriteButton, isFavorited);
+                });
+
+                jobItem.appendChild(favoriteButton);
+
+                jobList.appendChild(jobItem);
+            });
+        }
+    </script>
+</body>
+
+</html>
