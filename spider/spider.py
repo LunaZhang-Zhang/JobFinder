@@ -202,11 +202,11 @@ class Spider:
         return float(min_salary), float(max_salary), float(salary_month)   # 自动转换成tuple(min_salary, max_salary, month_salary)
 
 
-    # 存入DB
-    def __write_to_database(self, job_info_list: list[JobInfo]) -> None:
+    # 持久化存入文件
+    def __dump_to_file(self, job_info_list: list[JobInfo]) -> None:
         with open("result.json", "w", encoding='utf-8') as file:
             json.dump(job_info_list, file, ensure_ascii=False)
-        print('存入DB成功')
+        print('存入文件成功')
 
     # 爬虫执行器，公有方法，可以被外部代码自由调用。它用于提供类的功能，供其他对象或模块使用。
     def run(self):
@@ -224,7 +224,7 @@ class Spider:
             job_info_list = self.__crawl_and_parse(base_url)
             for job_info in job_info_list:
                 job_info.job_type = job_query
-            self.__write_to_database(job_info_list)
+            self.__dump_to_file(job_info_list)
 
 # 主函数
 if __name__ == '__main__':

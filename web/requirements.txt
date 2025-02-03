@@ -1,0 +1,6 @@
+Flask==3.1.0
+Flask_JWT_Extended==4.7.1
+jieba==0.42.1
+mysql_connector_repackaged==0.3.1
+Requests==2.32.3
+scikit_learn==1.6.1
