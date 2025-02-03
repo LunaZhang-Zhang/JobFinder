@@ -2,7 +2,6 @@
 # -*- coding:utf-8 -*-
 
 # 测试流程脚本
-import collections
 import requests
 import data
 

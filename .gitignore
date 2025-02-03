@@ -2,4 +2,4 @@
 __pycache__
 *.txt
 *.json
-web/apitest/old
+web/apitest/old/*
