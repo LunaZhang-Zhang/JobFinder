@@ -39,6 +39,7 @@ def query_user_info_by_userid(userid):
     try:
         mydb = mysql.connector.connect(host=db_config['host'],port=db_config['port'],user=db_config['user'],
                                        passwd=db_config['password'],database=db_config['database'])
+        mydb.autocommit = True
         cursor = mydb.cursor(dictionary=True, buffered=True)  # 以字典返回
 
         # 执行查询语句
@@ -127,14 +128,14 @@ def query_user_info_by_username(username):
     try:
         mydb = mysql.connector.connect(host=db_config['host'], port=db_config['port'], user=db_config['user'],
                                        passwd=db_config['password'], database=db_config['database'])
-        cursor = mydb.cursor(dictionary=True, buffered=True)  # 以字典返回
+        cursor = mydb.cursor(dictionary=True)  # 以字典返回
 
         # 执行查询语句
         query_sql = "SELECT * FROM user WHERE username = %s;"
         cursor.execute(query_sql, (username,))  # 传递一个包含所有参数的元组,所以一个元素也得用（，）
-        result_pd = cursor.fetchone()
+        result_pwd = cursor.fetchone()
         # 返回一个元组（tuple）, 一行数据, 字典形式 eg. {'password':'123456'}，需要提取出来
-        return UserInfo(result_pd)
+        return UserInfo(result_pwd)
 
     except Error as e:
         print(f"数据库错误: {e}")

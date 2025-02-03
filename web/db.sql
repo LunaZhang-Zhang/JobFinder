@@ -28,3 +28,4 @@ CREATE TABLE `job` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE user ADD UNIQUE KEY(username);
+

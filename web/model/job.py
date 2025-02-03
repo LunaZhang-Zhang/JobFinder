@@ -21,7 +21,7 @@ class JobInfo:
     link = ''          # 岗位链接
     background = ''    # 学历背景
     requirements = ''  # 岗位要求
-    is_favorited = False   # 该岗位是否被对应用户收藏
+    is_favorited = False   # 该岗位是否被对应用户收藏, 用于在匹配功能中，返回给前端该岗位是否被收藏
     similarity = 0     # 岗位requirement与个人skills的匹配度
 
     def __init__(self, db_query_result):
@@ -34,6 +34,15 @@ class JobInfo:
         self.link = db_query_result['link']
         self.background = db_query_result['background']
         self.requirements = db_query_result['requirements']
+
+    # JobInfo 排序大小比较
+    def __lt__(self, other):    # less than
+        # 文本相似度不同按文本相似度大小比较
+        if self.similarity != other.similarity:
+            return self.similarity < other.similarity
+        # 文本相似度相同，按jobid大小比较
+        else:
+            return self.jobid < other.jobid
 
     def serialize(self):   # 转换成json格式
         return {

@@ -59,6 +59,7 @@ def show_favorite_job():
         if len(fav_job_list) == 0:
             return jsonify(result=[]), 200
         job_info_list = job.list_job_info_by_fav_jobid(fav_job_list)
+        job_info_list.sort(key=lambda x: x.jobid)
         return jsonify(result=[e.serialize() for e in job_info_list]), 200
     except Error as e:
         return f"数据库错误: {e}", 500
@@ -116,8 +117,7 @@ def list_matched_job_info():
         matched_job_info_list.append(job_info)
 
     # 3. 根据相似度从大到小排序返回岗位信息列表
-    # .sort(key=lambda x: x['similarity'])表示从每个列表元素（假设是一个字典）中提取 similarity 键对应的值，作为排序的依据。
-    matched_job_info_list.sort(key=lambda x: x.similarity, reverse=True)
+    matched_job_info_list.sort(reverse=True)
     return jsonify(result=[e.serialize() for e in matched_job_info_list]), 200
 
 

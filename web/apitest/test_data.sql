@@ -40,3 +40,17 @@ INSERT INTO `job`(`name`, `type`, `location`, `company`, `salary`, `min_salary`,
 ('后端开发工程师', '后端开发', '上海', '京东', '25k-35k', 25000.00, 35000.00, 30000.00, 'https://www.jd.com', '软件工程', '熟悉Ruby语言', '2024-02-07', '2024-02-07'),
 ('软件测试工程师', '软件测试', '广州', '美团', '20k-30k', 20000.00, 30000.00, 25000.00, 'https://www.meituan.com', '计算机科学与技术', '掌握灰度测试方法', '2024-02-08', '2024-02-08'),
 ('产品经理', '产品经理', '深圳', '网易', '30k-40k', 30000.00, 40000.00, 35000.00, 'https://www.netease.com', '市场营销', '具备内容策划能力', '2024-02-09', '2024-02-09');
+
+USE jobdb;
+UPDATE `job`
+SET `background` = CASE
+    WHEN `background` = '计算机科学与技术' THEN '本科'
+    WHEN `background` = '软件工程' THEN '本科'
+    WHEN `background` = '市场营销' THEN '硕士'
+    WHEN `background` = '数学与应用数学' THEN '硕士'
+    WHEN `background` = '计算机网络' THEN '本科'
+    WHEN `background` = '统计学' THEN '硕士'
+    WHEN `background` = '项目管理' THEN '硕士'
+    WHEN `background` = '通信工程' THEN '本科'
+    ELSE '博士'
+END;
