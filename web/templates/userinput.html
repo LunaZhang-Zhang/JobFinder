@@ -98,14 +98,14 @@
         <h2>提交期望岗位信息</h2>
         <!-- 表单部分，这里的 action 需要替换为你实际的后台服务器地址 -->
         <form id="jobForm">
-            <label for="jobCategory">岗位类别：</label>
-            <input type="text" id="jobCategory" name="jobCategory" placeholder="请输入岗位类别" required>
+            <label for="job_type">岗位类别：</label>
+            <input type="text" id="job_type" name="job_type" placeholder="请输入岗位类别" required>
 
-            <label for="minSalary">最小薪资：</label>
-            <input type="number" id="minSalary" name="minSalary" placeholder="请输入最小薪资" min="0" required>
+            <label for="min_salary">最小薪资：</label>
+            <input type="number" id="min_salary" name="min_salary" placeholder="请输入最小薪资" min="0" required>
 
-            <label for="education">学历背景：</label>
-            <select id="education" name="education" required>
+            <label for="background">学历背景：</label>
+            <select id="background" name="background" required>
                 <option value="">请选择学历</option>
                 <option value="高中">高中</option>
                 <option value="大专">大专</option>
@@ -125,44 +125,35 @@
     </div>
 
     <script>
-        const form = document.getElementById("jobForm");
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
+       document.getElementById('jobForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // 阻止表单默认提交行为
+
             const messageDiv = document.getElementById('message');
             messageDiv.textContent = '正在提交，请稍候...';
-            // 从浏览器存储内取出用户token
-            token = localStorage.getItem("token");
-            // 从浏览器存储内取出用户id
-            userid = localStorage.getItem("userid");
-            // 这里注释掉的代码是使用 fetch API 提交表单数据的示例，如果你想用 fetch 可以取消注释并调整代码
-            fetch('/matchedjob/list', {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Authorization': token,
-                    'Content-Type': "application/json"
-                },
-                body: JSON.stringify(
-                    {
-                        "userid": userid,
-                        "jobCategory": document.getElementById("jobCategory"),
-                        "minSalary": document.getElementById("minSalary"),
-                        "education": document.getElementById("education"),
-                        "skills": document.getElementById("skills"),
-                    }
-                )
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('提交失败');
+
+            // 获取表单数据
+            const formData = new FormData(event.target);
+            const jsonData = {};
+
+            // 将表单数据转换为 JSON 对象
+            formData.forEach((value, key) => {
+                // 获取对应的 input 元素
+                const inputElement = event.target.querySelector(`[name="${key}"]`);
+
+                // 如果 input 的 type 是 number，将值转换为数字
+                if (inputElement && inputElement.type === 'number') {
+                    jsonData[key] = parseFloat(value); // 或者使用 parseInt 如果只处理整数
+                } else {
+                    jsonData[key] = value; // 其他字段保持原样
                 }
-            })
-            .then(data => {
-                localStorage.setItem("joblist", data)
-            })
-            .catch(error => {
-                messageDiv.textContent = error.message;
             });
+
+            // 从浏览器存储内取出用户id并塞入请求body
+            jsonData["userid"] = parseFloat(localStorage.getItem("userid"));
+            // 存储json到本地，跳转后发起请求
+            localStorage.setItem("matchedJobReq", JSON.stringify(jsonData))
+            // 跳转到浏览页面
+            window.location.href = '/showMatchedJobList.html';
         });
 
         // 为新增按钮绑定点击事件

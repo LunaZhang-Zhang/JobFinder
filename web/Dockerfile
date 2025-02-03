@@ -7,10 +7,10 @@ WORKDIR /app
 # 复制当前目录下的所有文件到容器的 /app 目录
 COPY . /app
 
-# 安装 Python 依赖
+# 安装 Python 依赖(在容器中执行)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 暴露 Flask 应用的端口（默认是 5000）
+# 暴露容器中 Flask 应用的端口（默认是 5000）
 EXPOSE 5000
 
 # 设置环境变量
