@@ -76,19 +76,16 @@
                 fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': token
                     },
-                    body: JSON.stringify({ jobId: jobId })
+                    body: JSON.stringify({ userid: parseFloat(localStorage.getItem("userid")), jobid: jobId })
                 })
                   .then(response => response.json())
                   .then(data => {
-                        if (data.success) {
-                            button.classList.toggle('favorited');
-                            // 假设成功后更新 isFavorited 状态
-                            button.dataset.isFavorited =!isFavorited;
-                        } else {
-                            alert(isFavorited ? '取消收藏失败：' + data.message : '收藏失败：' + data.message);
-                        }
+                        button.classList.toggle('favorited');
+                        // 假设成功后更新 isFavorited 状态
+                        button.dataset.isFavorited =!isFavorited;
                     })
                   .catch(error => {
                         console.error(isFavorited ? '取消收藏请求出错:' : '收藏请求出错:', error);

@@ -43,7 +43,7 @@ def add_favorite_job():
             return '用户不存在。', 400
         user_info.fav_job_ids.append(jobid)
         user.update_fav_job_ids_by_userid(userid, user_info.fav_job_ids)
-        return '收藏的岗位已保存。', 200
+        return jsonify(data=''), 200
     except Error as e:
         return f"数据库错误: {e}", 500
 
@@ -78,7 +78,7 @@ def delete_favorite_job():
         if jobid in user_info.fav_job_ids:
             user_info.fav_job_ids.remove(jobid)
             user.update_fav_job_ids_by_userid(userid, user_info.fav_job_ids)
-            return '收藏的岗位已删除。', 200
+            return jsonify(data=''), 200
         else:
             return '岗位未收藏。', 400
 
@@ -136,7 +136,7 @@ def user_register():
 
     try:
         user.add_user_info(username, password)
-        return '注册成功', 200
+        return jsonify(data=''), 200
 
     except Error as e:
         return f"数据库错误: {e}", 500
