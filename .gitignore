@@ -1,5 +1,4 @@
 .idea
 __pycache__
-*.txt
 *.json
 web/apitest/old/*
